@@ -8,10 +8,12 @@ import {
   ChevronUp, 
   Briefcase, 
   Building2, 
-  ArrowUpRight
+  ArrowUpRight,
+  Loader2,
+  CheckCircle2
 } from 'lucide-react';
 
-// Realistic 5-Year Projection Data
+// Realistic 5-Year Projection Data (Kept static as it's a future projection)
 const projectionData = [
   { year: '2026', savings: 500000, invested: 500000 },
   { year: '2027', savings: 1000000, invested: 1250000 },
@@ -20,8 +22,8 @@ const projectionData = [
   { year: '2030', savings: 2500000, invested: 4800000 },
 ];
 
-// Realistic Sector & Company Investment Data
-const portfolioData = [
+// Initial State for Portfolio
+const initialPortfolioData = [
   {
     id: 'tech',
     sector: 'Technology Equities',
@@ -60,17 +62,66 @@ const portfolioData = [
 ];
 
 const Wealth = () => {
-  const [expandedSector, setExpandedSector] = useState('tech'); // Default expanded
+  const [portfolio, setPortfolio] = useState(initialPortfolioData);
+  const [expandedSector, setExpandedSector] = useState('tech');
+  
+  // Rebalance States
+  const [isRebalancing, setIsRebalancing] = useState(false);
+  const [hasRebalanced, setHasRebalanced] = useState(false);
 
   const toggleSector = (id) => {
     setExpandedSector(expandedSector === id ? null : id);
   };
 
-  // Helper function to format currency
   const formatCurrency = (value) => `₨ ${(value / 1000000).toFixed(2)}M`;
 
+  // Dynamically calculate total invested for allocation percentages
+  const totalPortfolioValue = portfolio.reduce((sum, item) => sum + item.totalInvested, 0);
+
+  const getAllocationPct = (sectorId) => {
+    const sector = portfolio.find(s => s.id === sectorId);
+    return Math.round((sector.totalInvested / totalPortfolioValue) * 100);
+  };
+
+  // --- Rebalance Logic ---
+  const executeRebalance = () => {
+    setIsRebalancing(true);
+
+    // Simulate API call / processing time
+    setTimeout(() => {
+      setPortfolio(prevPortfolio => {
+        const newPortfolio = [...prevPortfolio];
+        
+        const techIndex = newPortfolio.findIndex(s => s.id === 'tech');
+        const reitIndex = newPortfolio.findIndex(s => s.id === 'real_estate');
+
+        // Calculate 15% of Tech Equities
+        const rebalanceAmount = newPortfolio[techIndex].totalInvested * 0.15; // 15% of 1.2M = 180,000
+
+        // Deduct from Tech
+        newPortfolio[techIndex] = {
+          ...newPortfolio[techIndex],
+          totalInvested: newPortfolio[techIndex].totalInvested - rebalanceAmount,
+          currentValue: newPortfolio[techIndex].currentValue - (rebalanceAmount * 1.28) // Adjusting current value roughly based on profit
+        };
+
+        // Add to Real Estate
+        newPortfolio[reitIndex] = {
+          ...newPortfolio[reitIndex],
+          totalInvested: newPortfolio[reitIndex].totalInvested + rebalanceAmount,
+          currentValue: newPortfolio[reitIndex].currentValue + (rebalanceAmount * 1.08)
+        };
+
+        return newPortfolio;
+      });
+
+      setIsRebalancing(false);
+      setHasRebalanced(true);
+    }, 2000); // 2-second simulation
+  };
+
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in pb-10">
       
       {/* Header Section */}
       <div>
@@ -122,7 +173,7 @@ const Wealth = () => {
             <h2 className="text-lg font-bold text-[#0a1d37] mb-6">Portfolio Breakdown</h2>
             
             <div className="space-y-4">
-              {portfolioData.map((item) => (
+              {portfolio.map((item) => (
                 <div key={item.id} className={`border rounded-xl transition-all duration-300 ${expandedSector === item.id ? 'border-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,0.15)]' : 'border-slate-200 hover:border-slate-300'}`}>
                   
                   {/* Sector Header (Clickable) */}
@@ -131,12 +182,12 @@ const Wealth = () => {
                     className="flex items-center justify-between p-4 cursor-pointer bg-white rounded-xl"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className={`p-2 rounded-lg ${expandedSector === item.id ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B] text-white' : 'bg-slate-100 text-slate-500'}`}>
+                      <div className={`p-2 rounded-lg transition-colors ${expandedSector === item.id ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8860B] text-white' : 'bg-slate-100 text-slate-500'}`}>
                         <Briefcase size={20} />
                       </div>
                       <div>
                         <h3 className="font-bold text-[#0a1d37]">{item.sector}</h3>
-                        <p className="text-xs text-slate-500">Invested: {formatCurrency(item.totalInvested)}</p>
+                        <p className="text-xs text-slate-500 transition-all">Invested: {formatCurrency(item.totalInvested)}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -152,10 +203,10 @@ const Wealth = () => {
 
                   {/* Companies Dropdown Content */}
                   {expandedSector === item.id && (
-                    <div className="px-4 pb-4 pt-2 bg-slate-50 border-t border-slate-100 rounded-b-xl space-y-3">
+                    <div className="px-4 pb-4 pt-2 bg-slate-50 border-t border-slate-100 rounded-b-xl space-y-3 animate-fade-in">
                       <div className="grid grid-cols-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">
                         <div className="col-span-2">Asset / Company</div>
-                        <div className="text-right">Invested</div>
+                        <div className="text-right">Initial</div>
                         <div className="text-right">Yield</div>
                       </div>
                       
@@ -181,21 +232,50 @@ const Wealth = () => {
         <div className="space-y-6">
           
           {/* Premium Recommendation Card */}
-          <div className="bg-[#0a1d37] text-white p-6 rounded-2xl shadow-[0_8px_20px_rgba(10,29,55,0.4)] relative overflow-hidden">
+          <div className={`text-white p-6 rounded-2xl shadow-[0_8px_20px_rgba(10,29,55,0.4)] relative overflow-hidden transition-all duration-500 ${hasRebalanced ? 'bg-emerald-900' : 'bg-[#0a1d37]'}`}>
             {/* Background Glow Effect */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37] rounded-full blur-[60px] opacity-20"></div>
+            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-20 ${hasRebalanced ? 'bg-emerald-400' : 'bg-[#D4AF37]'}`}></div>
             
-            <Sparkles className="text-[#D4AF37] mb-4 relative z-10" size={32} />
-            <h3 className="text-xl font-bold mb-2 relative z-10">AI Analyst Insight</h3>
-            <p className="text-sm text-slate-300 mb-6 leading-relaxed relative z-10">
-              Based on the current market trends, reallocating <strong className="text-white">15%</strong> of your Tech Equities into Shariah-compliant REITs will stabilize your quarterly dividends.
+            {hasRebalanced ? (
+              <CheckCircle2 className="text-emerald-400 mb-4 relative z-10" size={32} />
+            ) : (
+              <Sparkles className="text-[#D4AF37] mb-4 relative z-10" size={32} />
+            )}
+            
+            <h3 className="text-xl font-bold mb-2 relative z-10">
+              {hasRebalanced ? 'Portfolio Optimized' : 'AI Analyst Insight'}
+            </h3>
+            
+            <p className="text-sm text-slate-300 mb-6 leading-relaxed relative z-10 min-h-[60px]">
+              {hasRebalanced 
+                ? "Rebalancing complete. 15% of Tech Equities has been successfully shifted to Shariah-compliant REITs." 
+                : <span>Based on current market trends, reallocating <strong className="text-white">15%</strong> of your Tech Equities into Shariah-compliant REITs will stabilize your quarterly dividends.</span>
+              }
             </p>
-            <button className="w-full bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#B8860B] text-[#0a1d37] font-extrabold py-3 rounded-xl hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] hover:scale-[1.02] transition-all relative z-10">
-              Execute Rebalance
+            
+            <button 
+              onClick={executeRebalance}
+              disabled={isRebalancing || hasRebalanced}
+              className={`w-full font-extrabold py-3 rounded-xl transition-all relative z-10 flex items-center justify-center space-x-2
+                ${hasRebalanced 
+                  ? 'bg-emerald-800 text-emerald-200 cursor-default border border-emerald-700' 
+                  : 'bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#B8860B] text-[#0a1d37] hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] hover:scale-[1.02] disabled:opacity-80 disabled:cursor-wait'
+                }`}
+            >
+              {isRebalancing ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} />
+                  <span>Processing...</span>
+                </>
+              ) : hasRebalanced ? (
+                <span>Rebalanced Successfully</span>
+              ) : (
+                <span>Execute Rebalance</span>
+              )}
             </button>
           </div>
 
-          {/* Allocation Stats */}
+          {/* Dynamic Allocation Stats */}
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
             <div className="flex items-center space-x-4 mb-4">
               <div className="p-3 bg-gradient-to-br from-[#0a1d37] to-slate-800 text-[#D4AF37] rounded-xl shadow-md">
@@ -203,36 +283,52 @@ const Wealth = () => {
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">Current Allocation</p>
-                <p className="text-lg font-extrabold text-[#0a1d37]">Growth Oriented</p>
+                <p className="text-lg font-extrabold text-[#0a1d37]">
+                  {hasRebalanced ? 'Balanced Dividend' : 'Growth Oriented'}
+                </p>
               </div>
             </div>
             
-            <div className="space-y-3 mt-4">
+            <div className="space-y-4 mt-6">
+              {/* Mutual Funds */}
               <div>
-                <div className="flex justify-between text-sm mb-1">
+                <div className="flex justify-between text-sm mb-1.5">
                   <span className="text-slate-600 font-medium">Mutual Funds</span>
-                  <span className="font-bold text-[#0a1d37]">48%</span>
+                  <span className="font-bold text-[#0a1d37]">{getAllocationPct('mutual_funds')}%</span>
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-2">
-                  <div className="bg-[#D4AF37] h-2 rounded-full" style={{ width: '48%' }}></div>
+                  <div 
+                    className="bg-[#D4AF37] h-2 rounded-full transition-all duration-1000 ease-out" 
+                    style={{ width: `${getAllocationPct('mutual_funds')}%` }}
+                  ></div>
                 </div>
               </div>
+              
+              {/* Tech Equities */}
               <div>
-                <div className="flex justify-between text-sm mb-1">
+                <div className="flex justify-between text-sm mb-1.5">
                   <span className="text-slate-600 font-medium">Tech Equities</span>
-                  <span className="font-bold text-[#0a1d37]">23%</span>
+                  <span className="font-bold text-[#0a1d37]">{getAllocationPct('tech')}%</span>
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-2">
-                  <div className="bg-[#0a1d37] h-2 rounded-full" style={{ width: '23%' }}></div>
+                  <div 
+                    className="bg-[#0a1d37] h-2 rounded-full transition-all duration-1000 ease-out" 
+                    style={{ width: `${getAllocationPct('tech')}%` }}
+                  ></div>
                 </div>
               </div>
+              
+              {/* Real Estate */}
               <div>
-                <div className="flex justify-between text-sm mb-1">
+                <div className="flex justify-between text-sm mb-1.5">
                   <span className="text-slate-600 font-medium">Real Estate</span>
-                  <span className="font-bold text-[#0a1d37]">29%</span>
+                  <span className="font-bold text-[#0a1d37]">{getAllocationPct('real_estate')}%</span>
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-2">
-                  <div className="bg-slate-400 h-2 rounded-full" style={{ width: '29%' }}></div>
+                  <div 
+                    className="bg-slate-400 h-2 rounded-full transition-all duration-1000 ease-out" 
+                    style={{ width: `${getAllocationPct('real_estate')}%` }}
+                  ></div>
                 </div>
               </div>
             </div>

@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { 
   Banknote, TrendingUp, CreditCard, Scale, Activity, ChevronDown, 
-  Target, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, Clock
+  Target, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, Clock, X, Download
 } from 'lucide-react';
 
 // --- Realistic Financial Data & Mocks ---
@@ -36,12 +36,16 @@ const profitTrend = [
   { month: 'Apr', margin: 35.6, ebitda: 190000 },
 ];
 
-// Naya data right side widget ke liye
+// Expanded data for recent transactions widget (Added more to show scrolling in View All)
 const recentTransactions = [
   { id: 1, title: 'B2B Client Payment', date: 'Today, 10:24 AM', amount: '+₨ 150,000', type: 'income' },
   { id: 2, title: 'Server Hosting AWS', date: 'Yesterday, 2:15 PM', amount: '-₨ 45,000', type: 'expense' },
   { id: 3, title: 'Marketing Ads', date: 'Apr 16, 11:30 AM', amount: '-₨ 85,000', type: 'expense' },
   { id: 4, title: 'Consulting Retainer', date: 'Apr 15, 09:00 AM', amount: '+₨ 60,000', type: 'income' },
+  { id: 5, title: 'Office Supplies', date: 'Apr 14, 02:00 PM', amount: '-₨ 12,000', type: 'expense' },
+  { id: 6, title: 'Software License', date: 'Apr 13, 11:00 AM', amount: '-₨ 25,000', type: 'expense' },
+  { id: 7, title: 'E-commerce Sale', date: 'Apr 12, 05:45 PM', amount: '+₨ 34,000', type: 'income' },
+  { id: 8, title: 'Utility Bill', date: 'Apr 11, 09:15 AM', amount: '-₨ 18,500', type: 'expense' },
 ];
 
 const COLORS = ['#0a1d37', '#D4AF37', '#1c4a8a', '#e2e8f0'];
@@ -55,6 +59,7 @@ const homeSummary = [
 
 const Home = () => {
   const [activeMetric, setActiveMetric] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for the "View All" modal
   const deepDiveRef = useRef(null);
 
   const handleCardClick = (id) => {
@@ -72,6 +77,35 @@ const Home = () => {
       return () => clearTimeout(scrollTimeout);
     }
   }, [activeMetric]);
+
+  // --- Download Statement Functionality ---
+  const handleDownloadStatement = () => {
+    // Define CSV Headers
+    const headers = ['ID', 'Transaction Title', 'Date', 'Amount', 'Type'];
+    
+    // Map data to rows
+    const rows = recentTransactions.map(trx => [
+      trx.id,
+      `"${trx.title}"`, // Wrapped in quotes to handle any commas in text
+      `"${trx.date}"`,
+      `"${trx.amount}"`,
+      trx.type
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+
+    // Create a Blob and trigger the download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'The_Ledger_Guys_Statement.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -225,7 +259,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Actionable Summary Cards (Now with Background Icons and Better Sizing) */}
+      {/* Actionable Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {homeSummary.map((item) => {
           const Icon = item.icon;
@@ -260,7 +294,7 @@ const Home = () => {
                     <Icon size={22} className={isActive ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-[#D4AF37] transition-colors duration-300'} />
                   </div>
                   
-                  {/* Chota sa active indicator chevron */}
+                  {/* Active Indicator Chevron */}
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isActive ? 'bg-[#D4AF37]/10' : 'bg-transparent'}`}>
                     <ChevronDown size={18} className={`transition-transform duration-300 ${isActive ? 'rotate-180 text-[#D4AF37]' : 'opacity-0 text-slate-400 group-hover:opacity-100'}`} />
                   </div>
@@ -310,13 +344,17 @@ const Home = () => {
             <h2 className="text-lg font-bold text-[#0a1d37] flex items-center">
               <Clock size={18} className="mr-2 text-slate-400" /> Recent Activity
             </h2>
-            <button className="text-xs font-bold text-[#D4AF37] hover:text-[#0a1d37] transition-colors uppercase tracking-wider">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="text-xs font-bold text-[#D4AF37] hover:text-[#0a1d37] transition-colors uppercase tracking-wider"
+            >
               View All
             </button>
           </div>
           
           <div className="flex-1 flex flex-col justify-between space-y-4">
-            {recentTransactions.map((trx) => (
+            {/* Show only first 4 items on the widget */}
+            {recentTransactions.slice(0, 4).map((trx) => (
               <div key={trx.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                 <div className="flex items-center space-x-3">
                   <div className={`p-2 rounded-lg ${trx.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-500'}`}>
@@ -335,8 +373,11 @@ const Home = () => {
           </div>
           
           <div className="mt-4 pt-4 border-t border-slate-100">
-            <button className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#0a1d37] text-sm font-bold transition-colors">
-              Download Statement
+            <button 
+              onClick={handleDownloadStatement}
+              className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#0a1d37] text-sm font-bold transition-colors flex items-center justify-center"
+            >
+              <Download size={16} className="mr-2" /> Download Statement
             </button>
           </div>
         </div>
@@ -380,6 +421,61 @@ const Home = () => {
             >
               Close Deep Dive View
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- "VIEW ALL" MODAL COMPONENT --- */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[85vh] animate-fade-in relative">
+            
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div>
+                <h3 className="text-xl font-black text-[#0a1d37]">All Transactions</h3>
+                <p className="text-xs font-medium text-slate-400 mt-1">Complete history of recent account activity</p>
+              </div>
+              <button 
+                onClick={() => setIsModalOpen(false)} 
+                className="p-2 bg-white border border-slate-200 rounded-full text-slate-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body (Scrollable) */}
+            <div className="overflow-y-auto p-6 flex-1 space-y-4">
+              {recentTransactions.map((trx) => (
+                <div key={trx.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center space-x-4">
+                    <div className={`p-3 rounded-xl ${trx.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-500'}`}>
+                      {trx.type === 'income' ? <ArrowUpRight size={20} /> : <ArrowDownRight size={20} />}
+                    </div>
+                    <div>
+                      <p className="text-base font-bold text-[#0a1d37]">{trx.title}</p>
+                      <p className="text-sm font-medium text-slate-400">{trx.date}</p>
+                    </div>
+                  </div>
+                  <span className={`text-base font-black ${trx.type === 'income' ? 'text-emerald-600' : 'text-[#0a1d37]'}`}>
+                    {trx.amount}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50">
+              <button 
+                onClick={() => {
+                  handleDownloadStatement();
+                  setIsModalOpen(false); // Optionally close modal after download
+                }} 
+                className="w-full py-3.5 rounded-xl bg-[#0a1d37] hover:bg-[#1c4a8a] text-white text-sm font-bold transition-colors flex items-center justify-center shadow-md"
+              >
+                <Download size={18} className="mr-2" /> Download Full Statement (CSV)
+              </button>
+            </div>
           </div>
         </div>
       )}
