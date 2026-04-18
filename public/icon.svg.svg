@@ -1,0 +1,7 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <clipPath id="circle-clip">
+    <circle cx="100" cy="100" r="100" />
+  </clipPath>
+  
+  <image href="logo.jpg" width="200" height="200" clip-path="url(#circle-clip)" />
+</svg>
