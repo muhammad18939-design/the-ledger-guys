@@ -30,7 +30,8 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
   }, []);
 
   return (
-    <div className="relative flex min-h-screen bg-[#f3f6f9] font-sans antialiased text-slate-900 overflow-hidden">
+    // FIX 1: 'min-h-screen' ki jagah 'h-screen' kiya taake sidebar fixed rahe aur sirf right content scroll ho
+    <div className="relative flex h-screen bg-[#f3f6f9] font-sans antialiased text-slate-900 overflow-hidden">
       
       {/* --- 1. PREMIUM CINEMATIC LOADING OVERLAY --- */}
       {showOverlay && (
@@ -84,7 +85,6 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
       )}
 
       {/* --- 2. MOBILE TOP NAVBAR --- */}
-      {/* Visible only on smaller screens (md:hidden) */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a1d37] shadow-md z-[90] flex items-center justify-between px-4 border-b border-slate-800">
         <div className="flex items-center space-x-2">
           <img 
@@ -116,7 +116,6 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
       />
 
       {/* --- 4. MOBILE BACKGROUND OVERLAY --- */}
-      {/* Darkens the main content when the mobile sidebar is open */}
       {isMobileOpen && (
         <div 
           className="md:hidden fixed inset-0 bg-black/60 z-[95] backdrop-blur-sm transition-all"
@@ -125,24 +124,25 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
       )}
       
       {/* --- 5. MAIN CONTENT AREA --- */}
-      {/* Adjusts margin dynamically based on sidebar state */}
+      {/* FIX 2: 'h-screen' aur 'overflow-y-auto' yahan lagaya taake content aaraam se scroll ho */}
       <div 
-        className={`flex-1 min-h-screen transition-all duration-500 ease-in-out pt-16 md:pt-0 ${
+        className={`flex-1 h-screen overflow-y-auto transition-all duration-500 ease-in-out pt-16 md:pt-0 ${
           isCollapsed ? 'md:ml-20' : 'md:ml-64'
         } ml-0`}
       >
-        <main className="h-full p-4 sm:p-6 md:p-10 xl:p-12 overflow-y-auto">
+        {/* FIX 3: 'min-h-full' rakha taake main body flexible rahay */}
+        <main className="min-h-full p-4 sm:p-6 md:p-10 xl:p-12">
           
           {/* DYNAMIC ANIMATION LOGIC:
-            - Initial Load: Waits 2.5s for the loading screen to finish.
-            - Tab Change: 0s wait, loads smoothly in 1 second.
+            - showOverlay true hai (yani pehli baar loading): 2.5s wait
+            - showOverlay false hai (yani tab change): 0s wait, fauran load
           */}
           <div 
             key={activeTab} 
             className="w-full max-w-7xl mx-auto opacity-0"
             style={{ 
-              animation: 'fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-              animationDelay: showOverlay ? '0s' : '1s' 
+              animation: 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              animationDelay: showOverlay ? '2.5s' : '0s' 
             }}
           >
             {children}
