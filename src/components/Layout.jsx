@@ -142,7 +142,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
             className="w-full max-w-7xl mx-auto opacity-0"
             style={{ 
               animation: 'fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-              animationDelay: showOverlay ? '2.5s' : '0s' 
+              animationDelay: showOverlay ? '1s' : '0s' 
             }}
           >
             {children}
