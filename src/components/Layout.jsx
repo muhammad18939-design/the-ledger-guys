@@ -31,8 +31,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
               <div className="absolute inset-0 rounded-full border-t-4 border-b-4 border-[#D4AF37]/30 animate-[spin_3s_linear_infinite]"></div>
               {/* Inner Fast Spin */}
               <div className="absolute inset-2 rounded-full border-l-4 border-r-4 border-[#D4AF37] animate-[spin_1.5s_linear_infinite_reverse]"></div>
-              {/* Core Icon */}
-              <Loader2 size={36} className="animate-spin text-white relative z-10" />
+              {/* Core Icon (White spinner removed from here for cleaner look) */}
             </div>
 
             {/* Upgraded Typography */}
@@ -40,12 +39,16 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
               THE LEDGER <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37]">GUYS</span>
             </h2>
             
-            {/* Animated Loading Text */}
-            <div className="flex items-center space-x-1 text-sm font-bold tracking-[0.2em] uppercase mt-2">
-              <span className="text-slate-300">Initializing Workspace</span>
-              <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '0ms' }}>.</span>
-              <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '150ms' }}>.</span>
-              <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '300ms' }}>.</span>
+            {/* Animated Loading Text (Fixed Alignment) */}
+            <div className="flex flex-col items-center justify-center mt-2">
+              <div className="flex items-baseline space-x-1 text-sm font-bold tracking-[0.2em] uppercase">
+                <span className="text-slate-300">Initializing Workspace</span>
+                <div className="flex space-x-1 ml-1">
+                  <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '0ms' }}>.</span>
+                  <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '150ms' }}>.</span>
+                  <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '300ms' }}>.</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
