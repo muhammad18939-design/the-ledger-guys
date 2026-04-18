@@ -9,5 +9,5 @@ export default defineConfig({
     tailwindcss(),
   ],
   // Aapki GitHub repository ka jo sahi naam hai wo yahan likhein (bina spaces ke)
-  base: "/the ledger guys/", 
+  base: "/the-ledger-guys/", 
 })

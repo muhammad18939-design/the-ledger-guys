@@ -23,11 +23,11 @@ function App() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'home': return <Home transactions={transactions} />;
-      case 'dataEntry': return <DataEntry addTransaction={addTransaction} setActiveTab={setActiveTab} />;
-      case 'ledger': return <Ledger transactions={transactions} />;
-      case 'tax': return <TaxAbsorption transactions={transactions} />;
-      case 'wealth': return <Wealth />;
+      case 'Home': return <Home transactions={transactions} />;
+      case 'DataEntry': return <DataEntry addTransaction={addTransaction} setActiveTab={setActiveTab} />;
+      case 'Ledger': return <Ledger transactions={transactions} />;
+      case 'TaxAbsorption': return <TaxAbsorption transactions={transactions} />;
+      case 'Wealth': return <Wealth />;
       default: return <Home transactions={transactions} />;
     }
   };
