@@ -34,7 +34,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
       {/* 2. MOBILE TOP NAVBAR (Only visible on small screens) */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a1d37] shadow-md z-[90] flex items-center justify-between px-4">
         <div className="flex items-center space-x-2">
-          <img src="/logo.jpg" alt="Logo" className="w-8 h-8 rounded-full border border-[#f1b31c] bg-white object-cover" />
+          <img src="./logo.jpg" alt="Logo" className="w-8 h-8 rounded-full border border-[#f1b31c] bg-white object-cover" />
           <h1 className="font-bold text-white tracking-wider text-sm sm:text-base">
             THE LEDGER <span className="text-[#f1b31c]">GUYS</span>
           </h1>

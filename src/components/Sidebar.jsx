@@ -51,12 +51,12 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
         !showExpandedContent ? 'space-y-0 h-28' : 'space-y-4'
       }`}>
         <img 
-          src="/logo.jpg" 
-          alt="The Ledger Guys Logo" 
-          className={`rounded-full border-4 border-[#f1b31c] shadow-inner transition-all object-cover bg-white ${
-            !showExpandedContent ? 'w-10 h-10 border-2' : 'w-20 h-20 mt-4 md:mt-0'
-          }`} 
-        />
+  src="./logo.jpg" 
+  alt="The Ledger Guys Logo" 
+  className={`rounded-full border-4 border-[#f1b31c] shadow-inner transition-all object-cover bg-white ${
+    !showExpandedContent ? 'w-10 h-10 border-2' : 'w-20 h-20 mt-4 md:mt-0'
+  }`} 
+/>
         
         {showExpandedContent && (
           <div className="flex flex-col items-center">
