@@ -17,17 +17,37 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
   return (
     <div className="relative flex min-h-screen bg-[#f3f6f9] font-sans antialiased text-slate-900 overflow-hidden">
       
-      {/* 1. LOADING OVERLAY */}
+      {/* 1. PREMIUM LOADING OVERLAY */}
       {isLoading && (
-        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#0a1d37]/40 backdrop-blur-md text-white transition-opacity duration-500">
-          <div className="relative flex items-center justify-center mb-6">
-            <div className="absolute inset-0 rounded-full border-4 border-[#f1b31c] opacity-20 animate-ping"></div>
-            <Loader2 size={56} className="animate-spin text-[#f1b31c] relative z-10" />
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#0a1d37]/85 backdrop-blur-lg transition-all duration-700">
+          
+          {/* Ambient Background Glow */}
+          <div className="absolute w-72 h-72 bg-[#f1b31c] rounded-full blur-[100px] opacity-15 animate-pulse"></div>
+
+          <div className="relative flex flex-col items-center z-10">
+            {/* Animated Multi-Ring Spinner */}
+            <div className="relative flex items-center justify-center w-24 h-24 mb-8">
+              {/* Outer Slow Spin */}
+              <div className="absolute inset-0 rounded-full border-t-4 border-b-4 border-[#f1b31c]/30 animate-[spin_3s_linear_infinite]"></div>
+              {/* Inner Fast Spin */}
+              <div className="absolute inset-2 rounded-full border-l-4 border-r-4 border-[#f1b31c] animate-[spin_1.5s_linear_infinite_reverse]"></div>
+              {/* Core Icon */}
+              <Loader2 size={36} className="animate-spin text-white relative z-10" />
+            </div>
+
+            {/* Upgraded Typography */}
+            <h2 className="text-3xl sm:text-4xl font-black tracking-[0.25em] text-white text-center drop-shadow-xl mb-4">
+              THE LEDGER <span className="text-[#f1b31c]">GUYS</span>
+            </h2>
+            
+            {/* Animated Loading Text */}
+            <div className="flex items-center space-x-1 text-[#f1b31c] text-sm font-bold tracking-[0.2em] uppercase mt-2">
+              <span className="text-slate-300">Initializing Workspace</span>
+              <span className="animate-bounce text-[#f1b31c]" style={{ animationDelay: '0ms' }}>.</span>
+              <span className="animate-bounce text-[#f1b31c]" style={{ animationDelay: '150ms' }}>.</span>
+              <span className="animate-bounce text-[#f1b31c]" style={{ animationDelay: '300ms' }}>.</span>
+            </div>
           </div>
-          <h2 className="text-2xl font-extrabold tracking-widest text-white tracking-[0.2em] text-center">
-            THE LEDGER <span className="text-[#f1b31c]">GUYS</span>
-          </h2>
-          <p className="text-sm text-slate-200 mt-2 animate-pulse font-medium">Initializing your workspace...</p>
         </div>
       )}
 
