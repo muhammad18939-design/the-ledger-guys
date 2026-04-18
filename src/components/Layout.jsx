@@ -3,24 +3,26 @@ import Sidebar from './Sidebar';
 import { Menu } from 'lucide-react'; 
 
 const Layout = ({ children, activeTab, setActiveTab }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  // --- UI STATES ---
+  const [isCollapsed, setIsCollapsed] = useState(false); // Controls desktop sidebar width
+  const [isMobileOpen, setIsMobileOpen] = useState(false); // Controls mobile sidebar visibility
   
-  // PROFESSIONAL 2-STEP LOADER STATES
-  const [isLoading, setIsLoading] = useState(true);     // CSS transition (Fade In/Out) control karne ke liye
-  const [showOverlay, setShowOverlay] = useState(true); // Component ko DOM se completely hatane ke liye
+  // --- LOADING OVERLAY STATES ---
+  const [isLoading, setIsLoading] = useState(true);     // Triggers the CSS fade-out transition
+  const [showOverlay, setShowOverlay] = useState(true); // Completely unmounts the loader from the DOM
 
   useEffect(() => {
-    // Step 1: 2.2 seconds ke baad Loader ko fade-out karna shuru karo
+    // Step 1: Initiate the fade-out effect after 2.2 seconds
     const fadeOutTimer = setTimeout(() => {
       setIsLoading(false);
     }, 2200);
 
-    // Step 2: Fade-out transition complete hone ke baad (800ms transition time), screen ko DOM se hata do
+    // Step 2: Completely remove the loader from the DOM after the transition finishes (2200ms + 800ms)
     const removeOverlayTimer = setTimeout(() => {
       setShowOverlay(false);
-    }, 3000); // 2200 + 800ms = 3000
+    }, 3000); 
 
+    // Cleanup timers to prevent memory leaks
     return () => {
       clearTimeout(fadeOutTimer);
       clearTimeout(removeOverlayTimer);
@@ -30,7 +32,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
   return (
     <div className="relative flex min-h-screen bg-[#f3f6f9] font-sans antialiased text-slate-900 overflow-hidden">
       
-      {/* 1. PREMIUM CINEMATIC LOADING OVERLAY */}
+      {/* --- 1. PREMIUM CINEMATIC LOADING OVERLAY --- */}
       {showOverlay && (
         <div 
           className={`fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#0a1d37]/95 transition-all duration-[800ms] ease-in-out ${
@@ -40,19 +42,19 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
           }`}
         >
           
-          {/* Ambient Background Glow */}
+          {/* Ambient Gold Background Glow */}
           <div 
             className={`absolute w-72 h-72 bg-[#D4AF37] rounded-full blur-[100px] animate-pulse transition-opacity duration-[800ms] ${
               isLoading ? 'opacity-20' : 'opacity-0'
             }`}
           ></div>
 
-          {/* Core Content - Scales up slightly while fading out for a 3D cinematic effect */}
+          {/* Core Loader Content (Scales up dynamically during exit for a 3D effect) */}
           <div 
             className={`relative flex flex-col items-center z-10 transition-all duration-[800ms] ease-in-out ${
               isLoading 
                 ? 'scale-100 opacity-100' 
-                : 'scale-110 opacity-0 translate-y-4' // Jate waqt thoda bara aur neeche hoga
+                : 'scale-110 opacity-0 translate-y-4' 
             }`}
           >
             {/* Animated Multi-Ring Spinner */}
@@ -61,12 +63,12 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
               <div className="absolute inset-2 rounded-full border-l-4 border-r-4 border-[#D4AF37] animate-[spin_1.5s_linear_infinite_reverse]"></div>
             </div>
 
-            {/* Upgraded Typography */}
+            {/* Premium Typography / Brand Name */}
             <h2 className="text-3xl sm:text-4xl font-black tracking-[0.25em] text-white text-center drop-shadow-xl mb-4">
               THE LEDGER <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37]">GUYS</span>
             </h2>
             
-            {/* Animated Loading Text */}
+            {/* Animated Loading Text with Bouncing Dots */}
             <div className="flex flex-col items-center justify-center mt-2">
               <div className="flex items-baseline space-x-1 text-sm font-bold tracking-[0.2em] uppercase">
                 <span className="text-slate-300">Initializing Workspace</span>
@@ -81,12 +83,13 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
         </div>
       )}
 
-      {/* 2. MOBILE TOP NAVBAR */}
+      {/* --- 2. MOBILE TOP NAVBAR --- */}
+      {/* Visible only on smaller screens (md:hidden) */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a1d37] shadow-md z-[90] flex items-center justify-between px-4 border-b border-slate-800">
         <div className="flex items-center space-x-2">
           <img 
             src="./logo.jpg" 
-            alt="Logo" 
+            alt="The Ledger Guys Logo" 
             className="w-8 h-8 rounded-full border-2 border-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.3)] bg-white object-cover" 
           />
           <h1 className="font-bold text-white tracking-wider text-sm sm:text-base">
@@ -96,12 +99,13 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
         <button 
           onClick={() => setIsMobileOpen(true)}
           className="p-1 text-[#D4AF37] hover:bg-slate-800 rounded-md transition-colors"
+          aria-label="Open Mobile Menu"
         >
           <Menu size={28} />
         </button>
       </div>
 
-      {/* 3. SIDEBAR */}
+      {/* --- 3. SIDEBAR NAVIGATION --- */}
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
@@ -111,7 +115,8 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
         setIsMobileOpen={setIsMobileOpen}
       />
 
-      {/* 4. MOBILE BACKGROUND OVERLAY */}
+      {/* --- 4. MOBILE BACKGROUND OVERLAY --- */}
+      {/* Darkens the main content when the mobile sidebar is open */}
       {isMobileOpen && (
         <div 
           className="md:hidden fixed inset-0 bg-black/60 z-[95] backdrop-blur-sm transition-all"
@@ -119,20 +124,25 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
         ></div>
       )}
       
-      {/* 5. MAIN CONTENT AREA */}
+      {/* --- 5. MAIN CONTENT AREA --- */}
+      {/* Adjusts margin dynamically based on sidebar state */}
       <div 
         className={`flex-1 min-h-screen transition-all duration-500 ease-in-out pt-16 md:pt-0 ${
           isCollapsed ? 'md:ml-20' : 'md:ml-64'
         } ml-0`}
       >
         <main className="h-full p-4 sm:p-6 md:p-10 xl:p-12 overflow-y-auto">
-          {/* Dashboard items delay se aayenge jab loader hat raha hoga */}
+          
+          {/* DYNAMIC ANIMATION LOGIC:
+            - Initial Load: Waits 2.5s for the loading screen to finish.
+            - Tab Change: 0s wait, loads smoothly in 1 second.
+          */}
           <div 
             key={activeTab} 
             className="w-full max-w-7xl mx-auto opacity-0"
             style={{ 
-              animation: 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-              animationDelay: '2.5s' // Loader hatne ke time par dashboard samne aayega
+              animation: 'fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              animationDelay: showOverlay ? '2.5s' : '0s' 
             }}
           >
             {children}
@@ -140,6 +150,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
         </main>
       </div>
 
+      {/* --- 6. GLOBAL STYLES & ANIMATIONS --- */}
       <style>{`
         @keyframes fadeInUp {
           0% {
