@@ -1,44 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
-import { Menu } from 'lucide-react'; // Loader2 hata diya hai
+import { Loader2, Menu } from 'lucide-react'; 
 
 const Layout = ({ children, activeTab, setActiveTab }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  
-  // Professional Fade Logic States
-  const [isLoading, setIsLoading] = useState(true); // Animation trigger ke liye
-  const [isVisible, setIsVisible] = useState(true); // Component hatane ke liye
+  const [isCollapsed, setIsCollapsed] = useState(false); // Default expanded on desktop
+  const [isMobileOpen, setIsMobileOpen] = useState(false); // Mobile Menu State
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Step 1: 2.5 seconds baad fade out (opacity 0) shuru karo
-    const fadeTimer = setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2500);
-
-    // Step 2: Fade out animation (700ms) mukammal hone ke baad background hata do
-    const removeTimer = setTimeout(() => {
-      setIsVisible(false);
-    }, 3200);
-
-    return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(removeTimer);
-    };
+    }, 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="relative flex min-h-screen bg-[#f3f6f9] font-sans antialiased text-slate-900 overflow-hidden">
       
-      {/* 1. PREMIUM LOADING OVERLAY (Solid to Fade-out Logic) */}
-      {isVisible && (
-        <div 
-          className={`fixed inset-0 z-[200] flex flex-col items-center justify-center transition-all duration-700 ease-in-out ${
-            isLoading 
-              ? 'bg-[#0a1d37] opacity-100' // Shuru mein bilkul solid dark
-              : 'bg-[#0a1d37]/0 opacity-0 pointer-events-none' // End mein ahista ahista transparent
-          }`}
-        >
+      {/* 1. PREMIUM LOADING OVERLAY */}
+      {isLoading && (
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#0a1d37]/90 backdrop-blur-lg transition-all duration-700">
           
           {/* Ambient Background Glow */}
           <div className="absolute w-72 h-72 bg-[#D4AF37] rounded-full blur-[100px] opacity-20 animate-pulse"></div>
@@ -46,8 +27,11 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
           <div className="relative flex flex-col items-center z-10">
             {/* Animated Multi-Ring Spinner */}
             <div className="relative flex items-center justify-center w-24 h-24 mb-8">
+              {/* Outer Slow Spin */}
               <div className="absolute inset-0 rounded-full border-t-4 border-b-4 border-[#D4AF37]/30 animate-[spin_3s_linear_infinite]"></div>
+              {/* Inner Fast Spin */}
               <div className="absolute inset-2 rounded-full border-l-4 border-r-4 border-[#D4AF37] animate-[spin_1.5s_linear_infinite_reverse]"></div>
+              {/* Core Icon (White spinner removed from here for cleaner look) */}
             </div>
 
             {/* Upgraded Typography */}
@@ -55,7 +39,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
               THE LEDGER <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37]">GUYS</span>
             </h2>
             
-            {/* Animated Loading Text */}
+            {/* Animated Loading Text (Fixed Alignment) */}
             <div className="flex flex-col items-center justify-center mt-2">
               <div className="flex items-baseline space-x-1 text-sm font-bold tracking-[0.2em] uppercase">
                 <span className="text-slate-300">Initializing Workspace</span>
@@ -70,7 +54,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
         </div>
       )}
 
-      {/* 2. MOBILE TOP NAVBAR */}
+      {/* 2. MOBILE TOP NAVBAR (Only visible on small screens) */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a1d37] shadow-md z-[90] flex items-center justify-between px-4 border-b border-slate-800">
         <div className="flex items-center space-x-2">
           <img 
@@ -100,7 +84,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
         setIsMobileOpen={setIsMobileOpen}
       />
 
-      {/* 4. MOBILE BACKGROUND OVERLAY */}
+      {/* 4. MOBILE BACKGROUND OVERLAY (Darkens background when menu is open) */}
       {isMobileOpen && (
         <div 
           className="md:hidden fixed inset-0 bg-black/60 z-[95] backdrop-blur-sm transition-all"
@@ -109,6 +93,7 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
       )}
       
       {/* 5. MAIN CONTENT AREA */}
+      {/* pt-16 ensures content isn't hidden behind the mobile navbar */}
       <div 
         className={`flex-1 min-h-screen transition-all duration-500 ease-in-out pt-16 md:pt-0 ${
           isCollapsed ? 'md:ml-20' : 'md:ml-64'
