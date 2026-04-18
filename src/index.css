@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Custom Theme Colors */
+@theme {
+  --color-ledger-dark: #0a1d37;
+  --color-ledger-gold: #f1b31c;
+  --color-ledger-accent: #1c4a8a;
+  --color-ledger-light: #f3f6f9;
+}
+
+body {
+  background-color: var(--color-ledger-light);
+}
