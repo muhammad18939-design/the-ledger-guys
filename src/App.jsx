@@ -13,7 +13,7 @@ const initialTransactions = [
 ];
 
 function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('Home');
   const [transactions, setTransactions] = useState(initialTransactions);
 
   // Yeh function naya data add karega
