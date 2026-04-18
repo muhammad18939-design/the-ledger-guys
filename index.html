@@ -4,10 +4,41 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>the ledger guys</title>
+    <title>The Ledger Guys</title>
+    
+    <style>
+      body {
+        margin: 0;
+        background-color: #0a1d37; /* The Ledger Guys Dark Blue */
+        overflow: hidden;
+      }
+      .tlg-preloader {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+      }
+      .tlg-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid rgba(212, 175, 55, 0.2); /* Faded Gold */
+        border-top-color: #D4AF37; /* Solid Premium Gold */
+        border-radius: 50%;
+        animation: spin 1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="tlg-preloader">
+        <div class="tlg-spinner"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
