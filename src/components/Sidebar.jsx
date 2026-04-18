@@ -16,7 +16,6 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
     { id: 'DataEntry', label: 'Data Entry Form', icon: FileText },
     { id: 'Ledger', label: 'Ledger & Cash Flow', icon: BookOpen },
     { id: 'TaxAbsorption', label: 'FBR Tax Absorption', icon: ShieldCheck },
-    // Updated label here
     { id: 'Wealth', label: 'Wealth Manager Index', icon: TrendingUp }, 
   ];
 
@@ -47,15 +46,15 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
       </button>
 
       {/* Logo Section */}
-      <div className={`p-6 border-b border-slate-700/50 flex flex-col items-center justify-center transition-all duration-300 ${
-        !showExpandedContent ? 'space-y-0 h-28' : 'space-y-4'
+      <div className={`border-b border-slate-700/50 flex flex-col items-center justify-center transition-all duration-300 ${
+        !showExpandedContent ? 'py-6 px-2 space-y-0 h-24' : 'p-6 space-y-4'
       }`}>
-        {/* Changed border to Premium Gold */}
+        {/* Added shrink-0 so the logo never gets squished, and adjusted padding above! */}
         <img 
           src="./logo.jpg" 
           alt="The Ledger Guys Logo" 
-          className={`rounded-full border-4 border-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all object-cover bg-white ${
-            !showExpandedContent ? 'w-10 h-10 border-2' : 'w-20 h-20 mt-4 md:mt-0'
+          className={`rounded-full border-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all duration-300 object-cover bg-white shrink-0 ${
+            !showExpandedContent ? 'w-10 h-10 border-2' : 'w-20 h-20 border-4 mt-4 md:mt-0'
           }`} 
         />
         
@@ -92,7 +91,6 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
               title={!showExpandedContent ? item.label : ''}
               className={`w-full flex items-center ${!showExpandedContent ? 'justify-center px-0' : 'justify-start px-4'} py-3.5 rounded-xl transition-all duration-300 font-medium ${
                 isActive 
-                  // Premium Gold Gradient for Active Tab with glowing shadow
                   ? 'bg-gradient-to-r from-[#D4AF37] via-[#E2C25D] to-[#B8860B] text-[#0a1d37] shadow-[0_4px_15px_rgba(212,175,55,0.3)] scale-105 font-bold border border-[#F3E5AB]/50' 
                   : 'hover:bg-slate-800 hover:text-white text-slate-300'
               }`}
