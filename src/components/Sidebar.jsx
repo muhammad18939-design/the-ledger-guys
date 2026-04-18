@@ -12,11 +12,11 @@ import {
 
 const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
   const menuItems = [
-    { id: 'home', label: 'Dashboard', icon: Home },
-    { id: 'dataEntry', label: 'Data Entry Form', icon: FileText },
-    { id: 'ledger', label: 'Ledger & Cash Flow', icon: BookOpen },
-    { id: 'tax', label: 'FBR Tax Absorption', icon: ShieldCheck },
-    { id: 'wealth', label: 'Wealth Multiplication', icon: TrendingUp },
+    { id: 'Home', label: 'Dashboard', icon: Home },
+    { id: 'DdataEntry', label: 'Data Entry Form', icon: FileText },
+    { id: 'Ledger', label: 'Ledger & Cash Flow', icon: BookOpen },
+    { id: 'TaxAbsorption', label: 'FBR Tax Absorption', icon: ShieldCheck },
+    { id: 'Wealth', label: 'Wealth Multiplication', icon: TrendingUp },
   ];
 
   // Mobile pe hamesha expanded dikhega, desktop pe collapsed logic chalegi
