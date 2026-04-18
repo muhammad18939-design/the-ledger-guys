@@ -22,15 +22,15 @@ const DataEntry = ({ addTransaction, setActiveTab }) => {
       desc: formData.description
     });
     
-    alert('Transaction Saved! Aapko Ledger par le jaa rahe hain...');
+    alert('Transaction successfully saved! Redirecting to the Ledger...');
     setFormData({ date: '', type: 'Income', category: '', amount: '', description: '' });
     setActiveTab('ledger'); 
   };
 
-  // Generate Invoice Logic (Check if fields are filled before opening)
+  // Generate Invoice Logic (Check if mandatory fields are filled before opening)
   const handleGenerateInvoice = () => {
     if (!formData.date || !formData.amount || !formData.category) {
-      alert("Please fill Date, Category, and Amount to generate an invoice.");
+      alert("Please fill in the Date, Category, and Amount to generate an invoice.");
       return;
     }
     setShowInvoice(true);

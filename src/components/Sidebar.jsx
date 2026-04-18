@@ -7,7 +7,7 @@ import {
   TrendingUp, 
   ChevronLeft, 
   ChevronRight,
-  X // Mobile pe close karne ke liye Icon add kiya
+  X // Added an icon to close it on mobile.
 } from 'lucide-react';
 
 const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
@@ -19,7 +19,7 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
     { id: 'Wealth', label: 'Wealth Multiplication', icon: TrendingUp },
   ];
 
-  // Mobile pe hamesha expanded dikhega, desktop pe collapsed logic chalegi
+  // On mobile, it will always appear expanded; on desktop, the collapsed logic will apply.
   const showExpandedContent = !isCollapsed || isMobileOpen;
 
   return (
@@ -81,7 +81,7 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
               key={item.id}
               onClick={() => {
                 setActiveTab(item.id);
-                setIsMobileOpen(false); // Tab click hone pe mobile menu khud band ho jayega
+                setIsMobileOpen(false); // When a tab is clicked, the mobile menu will automatically close.
               }}
               title={!showExpandedContent ? item.label : ''}
               className={`w-full flex items-center ${!showExpandedContent ? 'justify-center px-0' : 'justify-start px-4'} py-3.5 rounded-xl transition-all duration-300 font-medium ${

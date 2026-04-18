@@ -8,6 +8,6 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  // Aapki GitHub repository ka jo sahi naam hai wo yahan likhein (bina spaces ke)
+  // Enter the correct name of your GitHub repository here (without spaces).
   base: "/the-ledger-guys/", 
 })

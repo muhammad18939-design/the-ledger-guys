@@ -6,7 +6,7 @@ import Ledger from './pages/Ledger';
 import TaxAbsorption from './pages/TaxAbsorption';
 import Wealth from './pages/Wealth';
 
-// Yeh hamara initial data hai jo shuru mein nazar aayega
+// Initial default transactions to be displayed on load
 const initialTransactions = [
   { id: 1, date: '2026-04-10', desc: 'Raw Material Purchase', cat: 'Inventory', type: 'Expense', amount: 45000 },
   { id: 2, date: '2026-04-12', desc: 'Wholesale Order #102', cat: 'Sales', type: 'Income', amount: 120000 },
@@ -16,7 +16,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('Home');
   const [transactions, setTransactions] = useState(initialTransactions);
 
-  // Yeh function naya data add karega
+  // Function to add a new transaction to the existing list
   const addTransaction = (newTx) => {
     setTransactions([{ id: Date.now(), ...newTx }, ...transactions]);
   };
