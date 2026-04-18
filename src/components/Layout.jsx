@@ -4,25 +4,22 @@ import { Menu } from 'lucide-react';
 
 const Layout = ({ children, activeTab, setActiveTab }) => {
   // --- UI STATES ---
-  const [isCollapsed, setIsCollapsed] = useState(false); // Controls desktop sidebar width
-  const [isMobileOpen, setIsMobileOpen] = useState(false); // Controls mobile sidebar visibility
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   
   // --- LOADING OVERLAY STATES ---
-  const [isLoading, setIsLoading] = useState(true);     // Triggers the CSS fade-out transition
-  const [showOverlay, setShowOverlay] = useState(true); // Completely unmounts the loader from the DOM
+  const [isLoading, setIsLoading] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
-    // Step 1: Initiate the fade-out effect after 2.2 seconds
     const fadeOutTimer = setTimeout(() => {
       setIsLoading(false);
     }, 2200);
 
-    // Step 2: Completely remove the loader from the DOM after the transition finishes (2200ms + 800ms)
     const removeOverlayTimer = setTimeout(() => {
       setShowOverlay(false);
     }, 3000); 
 
-    // Cleanup timers to prevent memory leaks
     return () => {
       clearTimeout(fadeOutTimer);
       clearTimeout(removeOverlayTimer);
@@ -30,8 +27,8 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
   }, []);
 
   return (
-    // FIX 1: 'min-h-screen' ki jagah 'h-screen' kiya taake sidebar fixed rahe aur sirf right content scroll ho
-    <div className="relative flex h-screen bg-[#f3f6f9] font-sans antialiased text-slate-900 overflow-hidden">
+    // FIX 1: Yahan se 'flex' remove kar diya taake width screen se bahar na jaye
+    <div className="relative h-screen bg-[#f3f6f9] font-sans antialiased text-slate-900 overflow-hidden">
       
       {/* --- 1. PREMIUM CINEMATIC LOADING OVERLAY --- */}
       {showOverlay && (
@@ -42,15 +39,12 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
               : 'opacity-0 backdrop-blur-none pointer-events-none'
           }`}
         >
-          
-          {/* Ambient Gold Background Glow */}
           <div 
             className={`absolute w-72 h-72 bg-[#D4AF37] rounded-full blur-[100px] animate-pulse transition-opacity duration-[800ms] ${
               isLoading ? 'opacity-20' : 'opacity-0'
             }`}
           ></div>
 
-          {/* Core Loader Content (Scales up dynamically during exit for a 3D effect) */}
           <div 
             className={`relative flex flex-col items-center z-10 transition-all duration-[800ms] ease-in-out ${
               isLoading 
@@ -58,18 +52,15 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
                 : 'scale-110 opacity-0 translate-y-4' 
             }`}
           >
-            {/* Animated Multi-Ring Spinner */}
             <div className="relative flex items-center justify-center w-24 h-24 mb-8">
               <div className="absolute inset-0 rounded-full border-t-4 border-b-4 border-[#D4AF37]/30 animate-[spin_3s_linear_infinite]"></div>
               <div className="absolute inset-2 rounded-full border-l-4 border-r-4 border-[#D4AF37] animate-[spin_1.5s_linear_infinite_reverse]"></div>
             </div>
 
-            {/* Premium Typography / Brand Name */}
             <h2 className="text-3xl sm:text-4xl font-black tracking-[0.25em] text-white text-center drop-shadow-xl mb-4">
               THE LEDGER <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37]">GUYS</span>
             </h2>
             
-            {/* Animated Loading Text with Bouncing Dots */}
             <div className="flex flex-col items-center justify-center mt-2">
               <div className="flex items-baseline space-x-1 text-sm font-bold tracking-[0.2em] uppercase">
                 <span className="text-slate-300">Initializing Workspace</span>
@@ -124,19 +115,15 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
       )}
       
       {/* --- 5. MAIN CONTENT AREA --- */}
-      {/* FIX 2: 'h-screen' aur 'overflow-y-auto' yahan lagaya taake content aaraam se scroll ho */}
+      {/* FIX 2: 'flex-1' hata diya aur 'h-full' rakha taake scrollbar strictly screen ke edge pe aye */}
       <div 
-        className={`flex-1 h-screen overflow-y-auto transition-all duration-500 ease-in-out pt-16 md:pt-0 ${
+        className={`h-full overflow-y-auto transition-all duration-500 ease-in-out pt-16 md:pt-0 ${
           isCollapsed ? 'md:ml-20' : 'md:ml-64'
-        } ml-0`}
+        }`}
       >
-        {/* FIX 3: 'min-h-full' rakha taake main body flexible rahay */}
-        <main className="min-h-full p-4 sm:p-6 md:p-10 xl:p-12">
+        {/* FIX 3: Bottom padding (pb-24) add ki taake content bilkul end border se chipke nahi */}
+        <main className="min-h-full p-4 sm:p-6 md:p-10 xl:p-12 pb-24">
           
-          {/* DYNAMIC ANIMATION LOGIC:
-            - showOverlay true hai (yani pehli baar loading): 2.5s wait
-            - showOverlay false hai (yani tab change): 0s wait, fauran load
-          */}
           <div 
             key={activeTab} 
             className="w-full max-w-7xl mx-auto opacity-0"
