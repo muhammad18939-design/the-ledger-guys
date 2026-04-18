@@ -13,7 +13,7 @@ import {
 const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
   const menuItems = [
     { id: 'Home', label: 'Dashboard', icon: Home },
-    { id: 'DdataEntry', label: 'Data Entry Form', icon: FileText },
+    { id: 'DataEntry', label: 'Data Entry Form', icon: FileText },
     { id: 'Ledger', label: 'Ledger & Cash Flow', icon: BookOpen },
     { id: 'TaxAbsorption', label: 'FBR Tax Absorption', icon: ShieldCheck },
     { id: 'Wealth', label: 'Wealth Multiplication', icon: TrendingUp },
