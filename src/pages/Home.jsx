@@ -4,8 +4,8 @@ import {
   BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, Legend
 } from 'recharts';
 import { 
-  Banknote, TrendingUp, CreditCard, Scale, ArrowUpRight, ArrowDownRight, 
-  Download, Calendar, Activity, ChevronDown, Target, AlertCircle, CheckCircle2 
+  Banknote, TrendingUp, CreditCard, Scale, Activity, ChevronDown, 
+  Target, AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight, Clock
 } from 'lucide-react';
 
 // --- Realistic Financial Data & Mocks ---
@@ -36,6 +36,14 @@ const profitTrend = [
   { month: 'Apr', margin: 35.6, ebitda: 190000 },
 ];
 
+// Naya data right side widget ke liye
+const recentTransactions = [
+  { id: 1, title: 'B2B Client Payment', date: 'Today, 10:24 AM', amount: '+₨ 150,000', type: 'income' },
+  { id: 2, title: 'Server Hosting AWS', date: 'Yesterday, 2:15 PM', amount: '-₨ 45,000', type: 'expense' },
+  { id: 3, title: 'Marketing Ads', date: 'Apr 16, 11:30 AM', amount: '-₨ 85,000', type: 'expense' },
+  { id: 4, title: 'Consulting Retainer', date: 'Apr 15, 09:00 AM', amount: '+₨ 60,000', type: 'income' },
+];
+
 const COLORS = ['#0a1d37', '#D4AF37', '#1c4a8a', '#e2e8f0'];
 
 const homeSummary = [
@@ -49,22 +57,21 @@ const Home = () => {
   const [activeMetric, setActiveMetric] = useState(null);
   const deepDiveRef = useRef(null);
 
-  // FIXED: Using useEffect to smoothly scroll ONLY AFTER the component has rendered the new section
+  const handleCardClick = (id) => {
+    setActiveMetric((prevActive) => {
+      if (prevActive === id) return null; 
+      return id;
+    });
+  };
+
   useEffect(() => {
     if (activeMetric && deepDiveRef.current) {
-      deepDiveRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const scrollTimeout = setTimeout(() => {
+        deepDiveRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+      return () => clearTimeout(scrollTimeout);
     }
   }, [activeMetric]);
-
-  const handleCardClick = (id) => {
-    console.log("Card clicked:", id); // Bhai console me check karna ye print ho raha hy ya nahi
-    // Toggle logic: agar same card press ho to close, warna open
-    if (activeMetric === id) {
-      setActiveMetric(null); 
-    } else {
-      setActiveMetric(id);
-    }
-  };
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -218,7 +225,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Actionable Summary Cards */}
+      {/* Actionable Summary Cards (Now with Background Icons and Better Sizing) */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {homeSummary.map((item) => {
           const Icon = item.icon;
@@ -227,30 +234,47 @@ const Home = () => {
           return (
             <button 
               key={item.id} 
-              type="button" // Important for ensuring it behaves like a normal button
+              type="button"
               onClick={() => handleCardClick(item.id)}
-              className={`group relative text-left w-full bg-white p-6 rounded-2xl border transition-all duration-300 overflow-hidden outline-none ${
+              className={`group relative text-left w-full bg-white p-7 min-h-[160px] rounded-2xl border transition-all duration-300 overflow-hidden outline-none flex flex-col justify-between ${
                 isActive 
                   ? 'border-[#D4AF37] shadow-[0_8px_30px_rgba(212,175,55,0.15)] ring-2 ring-[#D4AF37]/20 translate-y-0' 
                   : 'border-slate-200 shadow-sm hover:shadow-lg hover:border-[#D4AF37]/50 hover:-translate-y-1'
               }`}
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className={`p-2.5 rounded-lg border transition-colors duration-300 ${
-                  isActive ? 'bg-[#0a1d37] border-[#0a1d37]' : 'bg-slate-50 border-slate-100 group-hover:bg-[#0a1d37]'
-                }`}>
-                  <Icon size={20} className={isActive ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-[#D4AF37] transition-colors duration-300'} />
+              {/* Background Watermark Icon */}
+              <Icon 
+                size={140} 
+                strokeWidth={1}
+                className={`absolute -bottom-8 -right-8 pointer-events-none transition-all duration-500 ease-out z-0 ${
+                  isActive ? 'text-[#D4AF37] opacity-10 scale-110' : 'text-slate-200 opacity-30 group-hover:text-[#D4AF37] group-hover:opacity-10 group-hover:scale-110'
+                }`} 
+              />
+
+              {/* Foreground Content */}
+              <div className="relative z-10 w-full flex-1 flex flex-col justify-between">
+                <div className="flex justify-between items-start mb-4">
+                  <div className={`p-3 rounded-xl border transition-colors duration-300 shadow-sm ${
+                    isActive ? 'bg-[#0a1d37] border-[#0a1d37]' : 'bg-slate-50 border-slate-100 group-hover:bg-[#0a1d37]'
+                  }`}>
+                    <Icon size={22} className={isActive ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-[#D4AF37] transition-colors duration-300'} />
+                  </div>
+                  
+                  {/* Chota sa active indicator chevron */}
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isActive ? 'bg-[#D4AF37]/10' : 'bg-transparent'}`}>
+                    <ChevronDown size={18} className={`transition-transform duration-300 ${isActive ? 'rotate-180 text-[#D4AF37]' : 'opacity-0 text-slate-400 group-hover:opacity-100'}`} />
+                  </div>
+                </div>
+                
+                <div>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{item.title}</p>
+                  <div className="flex items-end justify-between">
+                    <h3 className="text-3xl font-black text-[#0a1d37] tracking-tight">{item.value}</h3>
+                  </div>
                 </div>
               </div>
               
-              <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
-                  {item.title} 
-                  <ChevronDown size={14} className={`transition-transform duration-300 ${isActive ? 'rotate-180 text-[#D4AF37]' : 'opacity-0 group-hover:opacity-100'}`} />
-                </p>
-                <h3 className="text-3xl font-black text-[#0a1d37] tracking-tight">{item.value}</h3>
-              </div>
-              <div className={`absolute bottom-0 left-0 h-1 bg-[#D4AF37] transition-all duration-500 ease-out ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></div>
+              <div className={`absolute bottom-0 left-0 h-1.5 bg-[#D4AF37] transition-all duration-500 ease-out z-20 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></div>
             </button>
           );
         })}
@@ -258,6 +282,8 @@ const Home = () => {
 
       {/* Main Charts Section (Top Level) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Side: Area Chart (Spans 2 columns) */}
         <div className="lg:col-span-2 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-lg font-bold text-[#0a1d37] flex items-center">
@@ -277,19 +303,66 @@ const Home = () => {
             </ResponsiveContainer>
           </div>
         </div>
+
+        {/* Right Side: Recent Activity Widget (Spans 1 column) */}
+        <div className="lg:col-span-1 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-[#0a1d37] flex items-center">
+              <Clock size={18} className="mr-2 text-slate-400" /> Recent Activity
+            </h2>
+            <button className="text-xs font-bold text-[#D4AF37] hover:text-[#0a1d37] transition-colors uppercase tracking-wider">
+              View All
+            </button>
+          </div>
+          
+          <div className="flex-1 flex flex-col justify-between space-y-4">
+            {recentTransactions.map((trx) => (
+              <div key={trx.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-lg ${trx.type === 'income' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-500'}`}>
+                    {trx.type === 'income' ? <ArrowUpRight size={18} /> : <ArrowDownRight size={18} />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-[#0a1d37]">{trx.title}</p>
+                    <p className="text-xs font-medium text-slate-400">{trx.date}</p>
+                  </div>
+                </div>
+                <span className={`text-sm font-black ${trx.type === 'income' ? 'text-emerald-600' : 'text-[#0a1d37]'}`}>
+                  {trx.amount}
+                </span>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-4 pt-4 border-t border-slate-100">
+            <button className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-[#0a1d37] text-sm font-bold transition-colors">
+              Download Statement
+            </button>
+          </div>
+        </div>
+
       </div>
 
-      {/* --- DRILL DOWN SECTION (Appears when a card is clicked) --- */}
+      {/* --- DRILL DOWN SECTION --- */}
       {activeMetric && (
         <div 
           ref={deepDiveRef} 
           className="mt-8 pt-8 border-t-2 border-slate-200/60 scroll-mt-6"
         >
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-2 h-8 bg-[#D4AF37] rounded-full"></div>
-            <h2 className="text-2xl font-black text-[#0a1d37] uppercase tracking-wide">
-              Deep Dive: {activeMetric}
-            </h2>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-8 bg-[#D4AF37] rounded-full"></div>
+              <h2 className="text-2xl font-black text-[#0a1d37] uppercase tracking-wide">
+                Deep Dive: {activeMetric}
+              </h2>
+            </div>
+            <button 
+              type="button"
+              onClick={() => setActiveMetric(null)}
+              className="text-slate-400 hover:text-red-500 transition-colors"
+            >
+              ✕
+            </button>
           </div>
 
           <div className="bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-200/80">
