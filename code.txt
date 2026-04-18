@@ -1,0 +1,7 @@
+git add .
+
+git commit -m "Fixed mobile responsiveness and sidebar tabs bug"
+
+git push
+
+npm run deploy
