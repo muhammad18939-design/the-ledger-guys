@@ -7,7 +7,7 @@ import {
   TrendingUp, 
   ChevronLeft, 
   ChevronRight,
-  X // Added an icon to close it on mobile.
+  X 
 } from 'lucide-react';
 
 const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
@@ -16,29 +16,29 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
     { id: 'DataEntry', label: 'Data Entry Form', icon: FileText },
     { id: 'Ledger', label: 'Ledger & Cash Flow', icon: BookOpen },
     { id: 'TaxAbsorption', label: 'FBR Tax Absorption', icon: ShieldCheck },
-    { id: 'Wealth', label: 'Wealth Multiplication', icon: TrendingUp },
+    // Updated label here
+    { id: 'Wealth', label: 'Wealth Manager Index', icon: TrendingUp }, 
   ];
 
-  // On mobile, it will always appear expanded; on desktop, the collapsed logic will apply.
   const showExpandedContent = !isCollapsed || isMobileOpen;
 
   return (
     <div 
-      className={`fixed left-0 top-0 h-screen bg-ledger-dark text-white flex flex-col transition-all duration-300 ease-in-out z-[100] shadow-2xl border-r border-slate-700/50
+      className={`fixed left-0 top-0 h-screen text-white flex flex-col transition-all duration-300 ease-in-out z-[100] shadow-2xl border-r border-slate-700/50
         ${isMobileOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64'} 
         md:translate-x-0 ${isCollapsed ? 'md:w-20' : 'md:w-64'}
       `}
-      style={{ backgroundColor: '#0a1d37' }} // Fallback in case class is missing
+      style={{ backgroundColor: '#0a1d37' }} 
     >
-      {/* Desktop Floating Toggle Button (Hidden on Mobile) */}
+      {/* Desktop Floating Toggle Button (Premium Gold Gradient) */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="hidden md:flex absolute -right-4 top-10 bg-[#f1b31c] text-[#0a1d37] w-8 h-8 rounded-full shadow-lg items-center justify-center border-2 border-white z-[110] hover:scale-110 cursor-pointer transition-transform"
+        className="hidden md:flex absolute -right-4 top-10 bg-gradient-to-br from-[#D4AF37] via-[#F3E5AB] to-[#B8860B] text-[#0a1d37] w-8 h-8 rounded-full shadow-[0_0_10px_rgba(212,175,55,0.4)] items-center justify-center border-2 border-white z-[110] hover:scale-110 cursor-pointer transition-transform"
       >
         {isCollapsed ? <ChevronRight size={18} strokeWidth={3} /> : <ChevronLeft size={18} strokeWidth={3} />}
       </button>
 
-      {/* Mobile Close Button (Hidden on Desktop) */}
+      {/* Mobile Close Button */}
       <button 
         onClick={() => setIsMobileOpen(false)}
         className="md:hidden absolute right-4 top-4 p-1 hover:bg-slate-700 rounded-md text-slate-300 transition-colors z-[110]"
@@ -50,20 +50,26 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
       <div className={`p-6 border-b border-slate-700/50 flex flex-col items-center justify-center transition-all duration-300 ${
         !showExpandedContent ? 'space-y-0 h-28' : 'space-y-4'
       }`}>
+        {/* Changed border to Premium Gold */}
         <img 
-  src="./logo.jpg" 
-  alt="The Ledger Guys Logo" 
-  className={`rounded-full border-4 border-[#f1b31c] shadow-inner transition-all object-cover bg-white ${
-    !showExpandedContent ? 'w-10 h-10 border-2' : 'w-20 h-20 mt-4 md:mt-0'
-  }`} 
-/>
+          src="./logo.jpg" 
+          alt="The Ledger Guys Logo" 
+          className={`rounded-full border-4 border-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.2)] transition-all object-cover bg-white ${
+            !showExpandedContent ? 'w-10 h-10 border-2' : 'w-20 h-20 mt-4 md:mt-0'
+          }`} 
+        />
         
         {showExpandedContent && (
           <div className="flex flex-col items-center">
             <div className="text-xl font-bold text-center tracking-tight whitespace-nowrap">
-              <span className="text-white">The Ledger</span> <span className="text-[#f1b31c]">Guys</span>
+              <span className="text-white">The Ledger</span>{' '}
+              {/* Gold Gradient Text */}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37]">
+                Guys
+              </span>
             </div>
-            <p className="mt-2 text-[10px] text-[#0a1d37] bg-[#f1b31c] px-3 py-1 rounded-full font-bold whitespace-nowrap">
+            {/* Gold Gradient Badge */}
+            <p className="mt-2 text-[10px] text-[#0a1d37] bg-gradient-to-r from-[#D4AF37] to-[#B8860B] shadow-md px-3 py-1 rounded-full font-bold whitespace-nowrap">
               FINANCIAL AUTOMATION
             </p>
           </div>
@@ -81,12 +87,13 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, isMobil
               key={item.id}
               onClick={() => {
                 setActiveTab(item.id);
-                setIsMobileOpen(false); // When a tab is clicked, the mobile menu will automatically close.
+                setIsMobileOpen(false); 
               }}
               title={!showExpandedContent ? item.label : ''}
               className={`w-full flex items-center ${!showExpandedContent ? 'justify-center px-0' : 'justify-start px-4'} py-3.5 rounded-xl transition-all duration-300 font-medium ${
                 isActive 
-                  ? 'bg-[#f1b31c] text-[#0a1d37] shadow-md scale-105 font-bold' 
+                  // Premium Gold Gradient for Active Tab with glowing shadow
+                  ? 'bg-gradient-to-r from-[#D4AF37] via-[#E2C25D] to-[#B8860B] text-[#0a1d37] shadow-[0_4px_15px_rgba(212,175,55,0.3)] scale-105 font-bold border border-[#F3E5AB]/50' 
                   : 'hover:bg-slate-800 hover:text-white text-slate-300'
               }`}
             >

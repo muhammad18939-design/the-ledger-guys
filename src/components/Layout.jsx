@@ -19,49 +19,53 @@ const Layout = ({ children, activeTab, setActiveTab }) => {
       
       {/* 1. PREMIUM LOADING OVERLAY */}
       {isLoading && (
-        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#0a1d37]/85 backdrop-blur-lg transition-all duration-700">
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#0a1d37]/90 backdrop-blur-lg transition-all duration-700">
           
           {/* Ambient Background Glow */}
-          <div className="absolute w-72 h-72 bg-[#f1b31c] rounded-full blur-[100px] opacity-15 animate-pulse"></div>
+          <div className="absolute w-72 h-72 bg-[#D4AF37] rounded-full blur-[100px] opacity-20 animate-pulse"></div>
 
           <div className="relative flex flex-col items-center z-10">
             {/* Animated Multi-Ring Spinner */}
             <div className="relative flex items-center justify-center w-24 h-24 mb-8">
               {/* Outer Slow Spin */}
-              <div className="absolute inset-0 rounded-full border-t-4 border-b-4 border-[#f1b31c]/30 animate-[spin_3s_linear_infinite]"></div>
+              <div className="absolute inset-0 rounded-full border-t-4 border-b-4 border-[#D4AF37]/30 animate-[spin_3s_linear_infinite]"></div>
               {/* Inner Fast Spin */}
-              <div className="absolute inset-2 rounded-full border-l-4 border-r-4 border-[#f1b31c] animate-[spin_1.5s_linear_infinite_reverse]"></div>
+              <div className="absolute inset-2 rounded-full border-l-4 border-r-4 border-[#D4AF37] animate-[spin_1.5s_linear_infinite_reverse]"></div>
               {/* Core Icon */}
               <Loader2 size={36} className="animate-spin text-white relative z-10" />
             </div>
 
             {/* Upgraded Typography */}
             <h2 className="text-3xl sm:text-4xl font-black tracking-[0.25em] text-white text-center drop-shadow-xl mb-4">
-              THE LEDGER <span className="text-[#f1b31c]">GUYS</span>
+              THE LEDGER <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37]">GUYS</span>
             </h2>
             
             {/* Animated Loading Text */}
-            <div className="flex items-center space-x-1 text-[#f1b31c] text-sm font-bold tracking-[0.2em] uppercase mt-2">
+            <div className="flex items-center space-x-1 text-sm font-bold tracking-[0.2em] uppercase mt-2">
               <span className="text-slate-300">Initializing Workspace</span>
-              <span className="animate-bounce text-[#f1b31c]" style={{ animationDelay: '0ms' }}>.</span>
-              <span className="animate-bounce text-[#f1b31c]" style={{ animationDelay: '150ms' }}>.</span>
-              <span className="animate-bounce text-[#f1b31c]" style={{ animationDelay: '300ms' }}>.</span>
+              <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '0ms' }}>.</span>
+              <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '150ms' }}>.</span>
+              <span className="animate-bounce text-[#D4AF37]" style={{ animationDelay: '300ms' }}>.</span>
             </div>
           </div>
         </div>
       )}
 
       {/* 2. MOBILE TOP NAVBAR (Only visible on small screens) */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a1d37] shadow-md z-[90] flex items-center justify-between px-4">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a1d37] shadow-md z-[90] flex items-center justify-between px-4 border-b border-slate-800">
         <div className="flex items-center space-x-2">
-          <img src="./logo.jpg" alt="Logo" className="w-8 h-8 rounded-full border border-[#f1b31c] bg-white object-cover" />
+          <img 
+            src="./logo.jpg" 
+            alt="Logo" 
+            className="w-8 h-8 rounded-full border-2 border-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.3)] bg-white object-cover" 
+          />
           <h1 className="font-bold text-white tracking-wider text-sm sm:text-base">
-            THE LEDGER <span className="text-[#f1b31c]">GUYS</span>
+            THE LEDGER <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#D4AF37]">GUYS</span>
           </h1>
         </div>
         <button 
           onClick={() => setIsMobileOpen(true)}
-          className="p-1 text-[#f1b31c] hover:bg-slate-800 rounded-md transition-colors"
+          className="p-1 text-[#D4AF37] hover:bg-slate-800 rounded-md transition-colors"
         >
           <Menu size={28} />
         </button>
