@@ -1,13 +1,53 @@
 @import "tailwindcss";
 
-/* Custom Theme Colors */
+/* Custom Premium Theme Configuration */
 @theme {
   --color-ledger-dark: #0a1d37;
-  --color-ledger-gold: #f1b31c;
-  --color-ledger-accent: #1c4a8a;
-  --color-ledger-light: #f3f6f9;
+  --color-ledger-gold: #D4AF37; /* Upgraded to realistic metallic gold */
+  --color-ledger-accent: #153055;
+  --color-ledger-light: #f8fafc;
+
+  /* Custom Animations used in our components */
+  --animate-fade-in: fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
+/* Base Styles */
 body {
   background-color: var(--color-ledger-light);
+  color: var(--color-ledger-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Optional: Custom scrollbar for a polished look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
