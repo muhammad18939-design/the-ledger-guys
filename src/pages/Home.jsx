@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, 
   BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, Legend
@@ -16,7 +16,6 @@ const cashFlowData = [
   { month: 'Apr', income: 489500, expenses: 315000 },
 ];
 
-// Drill-down data
 const revenueBreakdown = [
   { name: 'B2B Contracts', value: 850000 },
   { name: 'Direct Sales', value: 600000 },
@@ -39,7 +38,6 @@ const profitTrend = [
 
 const COLORS = ['#0a1d37', '#D4AF37', '#1c4a8a', '#e2e8f0'];
 
-// Dashboard Summaries config
 const homeSummary = [
   { id: 'revenue', title: 'Total Revenue', value: '₨ 1.81M', icon: Banknote, trend: '+14.2%', isPositive: true },
   { id: 'expenses', title: 'Total Expenses', value: '₨ 1.08M', icon: CreditCard, trend: '+5.1%', isPositive: false },
@@ -51,15 +49,23 @@ const Home = () => {
   const [activeMetric, setActiveMetric] = useState(null);
   const deepDiveRef = useRef(null);
 
-  // Handle card click and scroll
+  // FIXED: Using useEffect to smoothly scroll ONLY AFTER the component has rendered the new section
+  useEffect(() => {
+    if (activeMetric && deepDiveRef.current) {
+      deepDiveRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [activeMetric]);
+
   const handleCardClick = (id) => {
-    setActiveMetric(id);
-    setTimeout(() => {
-      deepDiveRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 150);
+    console.log("Card clicked:", id); // Bhai console me check karna ye print ho raha hy ya nahi
+    // Toggle logic: agar same card press ho to close, warna open
+    if (activeMetric === id) {
+      setActiveMetric(null); 
+    } else {
+      setActiveMetric(id);
+    }
   };
 
-  // Shared Tooltip for Main Charts
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -68,7 +74,7 @@ const Home = () => {
           {payload.map((entry, index) => (
             <div key={index} className="flex items-center justify-between space-x-6 text-sm mb-1">
               <span className="flex items-center text-slate-400 capitalize font-medium">
-                <span className="w-2.5 h-2.5 rounded-sm mr-2 shadow-sm" style={{ backgroundColor: entry.color || entry.payload.fill }}></span>
+                <span className="w-2.5 h-2.5 rounded-sm mr-2 shadow-sm" style={{ backgroundColor: entry.color || entry.payload?.fill }}></span>
                 {entry.name}
               </span>
               <span className="font-black text-white">
@@ -82,8 +88,6 @@ const Home = () => {
     return null;
   };
 
-  // --- CEO Deep Dive Sub-Components ---
-  
   const renderRevenueDetails = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
       <div>
@@ -116,18 +120,6 @@ const Home = () => {
             </li>
           </ul>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Customer Acquisition Cost</p>
-            <p className="text-2xl font-black text-[#0a1d37]">₨ 4,250</p>
-            <p className="text-xs text-emerald-600 font-bold mt-1">↓ 2.1% vs Last Qtr</p>
-          </div>
-          <div className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Lifetime Value (LTV)</p>
-            <p className="text-2xl font-black text-[#0a1d37]">₨ 145K</p>
-            <p className="text-xs text-emerald-600 font-bold mt-1">↑ 5.4% vs Last Qtr</p>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -156,21 +148,7 @@ const Home = () => {
               <AlertCircle className="text-red-500 mt-0.5" size={20} />
               <p className="text-sm text-red-900 font-medium"><strong className="font-black">Payroll</strong> has expanded beyond the 40% benchmark limit due to recent Q1 hires.</p>
             </li>
-            <li className="flex items-start space-x-3">
-              <Activity className="text-slate-600 mt-0.5" size={20} />
-              <p className="text-sm text-slate-800 font-medium">Marketing spend generated an ROI of 3.2x this month.</p>
-            </li>
           </ul>
-        </div>
-        <div className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Burn Rate</p>
-            <p className="text-2xl font-black text-[#0a1d37]">₨ 270K <span className="text-sm text-slate-400 font-medium">/ month</span></p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Runway</p>
-            <p className="text-2xl font-black text-[#D4AF37]">14.5 Mos</p>
-          </div>
         </div>
       </div>
     </div>
@@ -198,9 +176,6 @@ const Home = () => {
          <div className="bg-[#0a1d37] p-6 rounded-2xl shadow-lg border border-slate-700 text-white flex-1 flex flex-col justify-center">
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Q1 Net Profit Margin</p>
             <h2 className="text-5xl font-black text-[#D4AF37] tracking-tight">40.3%</h2>
-            <div className="mt-4 pt-4 border-t border-slate-700/50">
-               <p className="text-sm font-medium text-slate-300 leading-relaxed">Exceeding industry benchmark of 25%. Maintain current pricing structures to retain edge.</p>
-            </div>
          </div>
       </div>
     </div>
@@ -220,15 +195,6 @@ const Home = () => {
                 <div className="bg-[#0a1d37] h-full w-[18%] rounded-full"></div>
               </div>
             </div>
-            <div>
-              <div className="flex justify-between items-end mb-2">
-                <span className="text-sm font-bold text-slate-600">Sales Tax (Provincial) Filings</span>
-                <span className="text-sm font-black text-emerald-600">Up to Date</span>
-              </div>
-              <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
-                <div className="bg-emerald-500 h-full w-full rounded-full"></div>
-              </div>
-            </div>
          </div>
       </div>
       <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex flex-col items-center justify-center text-center">
@@ -236,7 +202,7 @@ const Home = () => {
           <CheckCircle2 size={32} />
         </div>
         <h4 className="text-lg font-black text-emerald-900 mb-2">Audit Ready</h4>
-        <p className="text-sm text-emerald-700 font-medium">All ledgers are balanced. You are safe from non-filer penalties.</p>
+        <p className="text-sm text-emerald-700 font-medium">All ledgers are balanced.</p>
       </div>
     </div>
   );
@@ -250,17 +216,6 @@ const Home = () => {
           <h1 className="text-3xl font-black text-[#0a1d37] tracking-tight">Executive Dashboard</h1>
           <p className="text-slate-500 mt-1 font-medium text-sm">Real-time business health and corporate compliance monitoring.</p>
         </div>
-        
-        <div className="flex items-center space-x-3">
-          <button className="flex items-center space-x-2 bg-white border border-slate-200 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
-            <Calendar size={16} className="text-[#D4AF37]" />
-            <span>Q1 / Q2 - 2026</span>
-          </button>
-          <button className="flex items-center space-x-2 bg-[#0a1d37] hover:bg-[#153055] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-[0_4px_12px_rgba(10,29,55,0.2)] hover:-translate-y-0.5">
-            <Download size={16} />
-            <span>Export Report</span>
-          </button>
-        </div>
       </div>
 
       {/* Actionable Summary Cards */}
@@ -272,8 +227,9 @@ const Home = () => {
           return (
             <button 
               key={item.id} 
+              type="button" // Important for ensuring it behaves like a normal button
               onClick={() => handleCardClick(item.id)}
-              className={`group relative text-left bg-white p-6 rounded-2xl border transition-all duration-300 overflow-hidden outline-none ${
+              className={`group relative text-left w-full bg-white p-6 rounded-2xl border transition-all duration-300 overflow-hidden outline-none ${
                 isActive 
                   ? 'border-[#D4AF37] shadow-[0_8px_30px_rgba(212,175,55,0.15)] ring-2 ring-[#D4AF37]/20 translate-y-0' 
                   : 'border-slate-200 shadow-sm hover:shadow-lg hover:border-[#D4AF37]/50 hover:-translate-y-1'
@@ -285,15 +241,6 @@ const Home = () => {
                 }`}>
                   <Icon size={20} className={isActive ? 'text-[#D4AF37]' : 'text-slate-600 group-hover:text-[#D4AF37] transition-colors duration-300'} />
                 </div>
-                
-                {/* Trend Badge */}
-                <div className={`flex items-center px-2 py-1 rounded-md text-xs font-bold ${
-                  item.isText ? 'bg-blue-50 text-blue-600' :
-                  item.isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
-                }`}>
-                  {!item.isText && (item.isPositive ? <ArrowUpRight size={14} className="mr-1" /> : <ArrowDownRight size={14} className="mr-1" />)}
-                  {item.trend}
-                </div>
               </div>
               
               <div>
@@ -303,8 +250,6 @@ const Home = () => {
                 </p>
                 <h3 className="text-3xl font-black text-[#0a1d37] tracking-tight">{item.value}</h3>
               </div>
-
-              {/* Decorative Accent Line */}
               <div className={`absolute bottom-0 left-0 h-1 bg-[#D4AF37] transition-all duration-500 ease-out ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></div>
             </button>
           );
@@ -313,79 +258,23 @@ const Home = () => {
 
       {/* Main Charts Section (Top Level) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Main Area Chart */}
         <div className="lg:col-span-2 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
           <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-lg font-bold text-[#0a1d37] flex items-center">
-                <Activity size={18} className="mr-2 text-[#D4AF37]" /> Cash Flow Dynamics
-              </h2>
-            </div>
-            <div className="flex space-x-4">
-              <span className="flex items-center text-xs font-bold text-slate-500">
-                <span className="w-2.5 h-2.5 bg-[#0a1d37] rounded-sm mr-2"></span> Income
-              </span>
-              <span className="flex items-center text-xs font-bold text-slate-500">
-                <span className="w-2.5 h-2.5 bg-[#D4AF37] rounded-sm mr-2"></span> Expenses
-              </span>
-            </div>
+            <h2 className="text-lg font-bold text-[#0a1d37] flex items-center">
+              <Activity size={18} className="mr-2 text-[#D4AF37]" /> Cash Flow Dynamics
+            </h2>
           </div>
-          
           <div style={{ width: '100%', height: 280 }}>
             <ResponsiveContainer>
               <AreaChart data={cashFlowData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0a1d37" stopOpacity={0.15}/>
-                    <stop offset="95%" stopColor="#0a1d37" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#D4AF37" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} dy={10} fontWeight={600} />
                 <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₨${value/1000}k`} fontWeight={600} />
-                <RechartsTooltip content={<CustomTooltip />} cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                <Area type="monotone" dataKey="income" stroke="#0a1d37" strokeWidth={3} fillOpacity={1} fill="url(#colorIncome)" />
-                <Area type="monotone" dataKey="expenses" stroke="#D4AF37" strokeWidth={3} fillOpacity={1} fill="url(#colorExpenses)" />
+                <RechartsTooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="income" stroke="#0a1d37" strokeWidth={3} fillOpacity={0.1} />
+                <Area type="monotone" dataKey="expenses" stroke="#D4AF37" strokeWidth={3} fillOpacity={0.1} />
               </AreaChart>
             </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Comparative Bar Chart & Mini Stats */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-[#0a1d37] mb-6">Performance Ratio</h2>
-            <div style={{ width: '100%', height: 180 }}>
-              <ResponsiveContainer>
-                <BarChart data={cashFlowData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                  <RechartsTooltip content={<CustomTooltip />} cursor={{fill: '#f8fafc'}} />
-                  <Bar dataKey="income" fill="#0a1d37" radius={[4, 4, 0, 0]} barSize={20} />
-                  <Bar dataKey="expenses" fill="#D4AF37" radius={[4, 4, 0, 0]} barSize={20} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-          
-          <div className="mt-6 pt-6 border-t border-slate-100">
-            <div className="flex justify-between items-end mb-2">
-              <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Overall Margin</p>
-                <p className="text-2xl font-black text-[#0a1d37]">40.3%</p>
-              </div>
-              <div className="text-right">
-                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">On Track</span>
-              </div>
-            </div>
-            <div className="w-full bg-slate-100 h-2.5 rounded-full mt-3 overflow-hidden border border-slate-200">
-              <div className="bg-gradient-to-r from-[#D4AF37] to-[#B8860B] h-full w-[65%] rounded-full relative">
-                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -412,6 +301,7 @@ const Home = () => {
           
           <div className="flex justify-center mt-6">
             <button 
+              type="button"
               onClick={() => setActiveMetric(null)}
               className="text-sm font-bold text-slate-400 hover:text-[#0a1d37] transition-colors uppercase tracking-wider"
             >
