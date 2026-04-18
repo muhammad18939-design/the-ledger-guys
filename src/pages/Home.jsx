@@ -49,29 +49,22 @@ const Home = () => {
   const [activeMetric, setActiveMetric] = useState(null);
   const deepDiveRef = useRef(null);
 
-  // FIXED: Flawless Toggle Logic
-  const handleCardClick = (id) => {
-    setActiveMetric((prevActive) => {
-      // Agar click kiya hua card already active hai, to usko OFF (null) kardo
-      if (prevActive === id) {
-        return null; 
-      }
-      // Warna naye card ko ON kardo
-      return id;
-    });
-  };
-
-  // FIXED: Smart Scrolling. Sirf tab scroll karega jab activeMetric ON hoga (null nahi hoga)
+  // FIXED: Using useEffect to smoothly scroll ONLY AFTER the component has rendered the new section
   useEffect(() => {
     if (activeMetric && deepDiveRef.current) {
-      // Thora sa delay diya hy taake component pehle render ho jaye uske baad scroll ho
-      const scrollTimeout = setTimeout(() => {
-        deepDiveRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 50);
-      
-      return () => clearTimeout(scrollTimeout);
+      deepDiveRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [activeMetric]);
+
+  const handleCardClick = (id) => {
+    console.log("Card clicked:", id); // Bhai console me check karna ye print ho raha hy ya nahi
+    // Toggle logic: agar same card press ho to close, warna open
+    if (activeMetric === id) {
+      setActiveMetric(null); 
+    } else {
+      setActiveMetric(id);
+    }
+  };
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -234,7 +227,7 @@ const Home = () => {
           return (
             <button 
               key={item.id} 
-              type="button"
+              type="button" // Important for ensuring it behaves like a normal button
               onClick={() => handleCardClick(item.id)}
               className={`group relative text-left w-full bg-white p-6 rounded-2xl border transition-all duration-300 overflow-hidden outline-none ${
                 isActive 
@@ -286,27 +279,17 @@ const Home = () => {
         </div>
       </div>
 
-      {/* --- DRILL DOWN SECTION --- */}
+      {/* --- DRILL DOWN SECTION (Appears when a card is clicked) --- */}
       {activeMetric && (
         <div 
           ref={deepDiveRef} 
           className="mt-8 pt-8 border-t-2 border-slate-200/60 scroll-mt-6"
         >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="w-2 h-8 bg-[#D4AF37] rounded-full"></div>
-              <h2 className="text-2xl font-black text-[#0a1d37] uppercase tracking-wide">
-                Deep Dive: {activeMetric}
-              </h2>
-            </div>
-            {/* Ek chota close button yahan bhi de diya hy top pe */}
-            <button 
-              type="button"
-              onClick={() => setActiveMetric(null)}
-              className="text-slate-400 hover:text-red-500 transition-colors"
-            >
-              ✕
-            </button>
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="w-2 h-8 bg-[#D4AF37] rounded-full"></div>
+            <h2 className="text-2xl font-black text-[#0a1d37] uppercase tracking-wide">
+              Deep Dive: {activeMetric}
+            </h2>
           </div>
 
           <div className="bg-white p-6 md:p-8 rounded-2xl shadow-md border border-slate-200/80">
